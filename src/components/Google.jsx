@@ -323,9 +323,7 @@ const Google = ({id}) => {
                     </svg>
                   )}
                 </div>
-                <h3 className="relative z-10 text-white text-sm font-semibold">
-                  {item.title}
-                </h3>
+                
               </motion.div>
             ))}
           </div>
