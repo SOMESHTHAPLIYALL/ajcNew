@@ -402,29 +402,31 @@ const Power = ({ id }) => {
             ))}
           </div>
 
-          <div className="md:hidden grid grid-cols-2 gap-4 mb-8">
+          <div className="md:hidden grid grid-cols-2 gap-4 mb-8 overflow-visible">
             {industries.map((industry, index) => (
               <div
                 key={index}
-                className={`group relative flex flex-col items-center p-4 rounded-lg ${
+                className={`group relative flex flex-col items-center p-4 rounded-lg overflow-visible ${
                   index === industries.length - 1 ? "col-span-2 mx-auto" : ""
                 }`}
                 style={{
                   maxWidth: index === industries.length - 1 ? "50%" : "100%",
                 }}
               >
-                <div className="absolute inset-0 rounded-lg bg-[#96f7ea] opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300 -z-10 scale-90 group-hover:scale-110" />
+                {/* Glow effect - modified */}
+                <div className="absolute inset-0 rounded-lg bg-[#96f7ea] opacity-0 group-hover:opacity-40 blur-sm transition-all duration-300 -z-10 scale-95 group-hover:scale-105" />
+
                 <div className="relative">
                   <img
                     src={industry.icon}
                     alt={industry.name}
                     className="w-20 h-20 sm:w-16 sm:h-16 mb-2 object-contain transition-all duration-300
-                   group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(150,247,234,0.6)] cursor-pointer"
+         group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(150,247,234,0.6)] cursor-pointer"
                   />
                 </div>
                 <p
                   className="text-center text-xs sm:text-sm transition-all duration-300
-                  group-hover:text-[#96f7ea] group-hover:font-medium"
+        group-hover:text-[#96f7ea] group-hover:font-medium"
                 >
                   {industry.name}
                 </p>
