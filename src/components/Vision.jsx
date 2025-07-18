@@ -145,7 +145,9 @@ const Vision = ({id}) => {
               className="flex flex-col justify-center items-center"
               variants={visionItem}
               whileHover="hover"
+              whileTap="hover"
               custom={index}
+              
             >
               <img
                 className="h-[100px] sm:h-[120px] lg:h-[140px] xl:h-[160px] mb-3 lg:mb-4 object-contain"
