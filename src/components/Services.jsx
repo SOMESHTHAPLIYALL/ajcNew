@@ -194,7 +194,7 @@ const Services = ({ id }) => {
             <p className="text-gray-300 font-[Roboto] text-sm md:text-base">
               Decoding chemicals;
               <br />
-              Delivering growth!
+              Delivering growth
             </p>
 
             {/* Data Server */}
