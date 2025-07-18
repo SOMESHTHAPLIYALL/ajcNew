@@ -32,19 +32,14 @@ const NewsLetter = ({ id }) => {
     },
   };
 
-  const handleSubmit = async () => {
-    // Basic validation
-    if (!email) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
-    // Email validation
+  // Email validation function
+  const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async () => {
+    if (!isValidEmail(email)) return; // Additional safeguard
 
     setIsLoading(true);
     try {
@@ -103,14 +98,16 @@ const NewsLetter = ({ id }) => {
             className="text-white outline-none border-[2px] rounded-[100px] border-[#0D8D79] p-3 lg:p-4 w-full lg:w-[400px] bg-transparent placeholder-gray-300 focus:ring-2 focus:ring-[#0D8D79]"
           />
           <motion.button
-            className="cursor-pointer rounded-3xl md:rounded-tl-none md:rounded-bl-none md:rounded-tr-3xl md:rounded-br-3xl bg-[#13C7AF] h-[50px] lg:h-[60px] w-[120px] lg:w-[150px] -ml-0 lg:-ml-8 text-white font-bold flex justify-center items-center"
+            className={`cursor-pointer rounded-3xl md:rounded-tl-none md:rounded-bl-none md:rounded-tr-3xl md:rounded-br-3xl ${
+              isValidEmail(email) ? "bg-[#13C7AF]" : "bg-gray-500"
+            } h-[50px] lg:h-[60px] w-[120px] lg:w-[150px] -ml-0 lg:-ml-8 text-white font-bold flex justify-center items-center`}
             style={{ textShadow: "0 0 5px rgba(255,255,255,0.3)" }}
             variants={buttonVariants}
-            whileHover={!isLoading ? "hover" : {}}
-            whileTap={!isLoading ? "tap" : {}}
-            animate="pulse"
+            whileHover={!isLoading && isValidEmail(email) ? "hover" : {}}
+            whileTap={!isLoading && isValidEmail(email) ? "tap" : {}}
+            animate={isValidEmail(email) ? "pulse" : {}}
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={isLoading || !isValidEmail(email)}
           >
             {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Subscribe"}
           </motion.button>
