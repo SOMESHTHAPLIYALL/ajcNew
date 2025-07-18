@@ -109,6 +109,8 @@ const Hero = () => {
         >
           <motion.img
             src={heroSection}
+            loading="lazy"
+            decoding="async"
             className="lg:h-[900px] w-[1000px] max-h-[500px] "
             alt="Hero section visual"
             whileHover={imageHover}
