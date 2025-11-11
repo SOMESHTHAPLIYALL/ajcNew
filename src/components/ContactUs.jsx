@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import contact from "../assets/pictures/contact.png";
 import { motion } from "framer-motion";
-import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import emailjs from "emailjs-com";
 
 const ContactUs = ({ id }) => {
   const [formData, setFormData] = useState({
@@ -22,13 +22,11 @@ const ContactUs = ({ id }) => {
   };
 
   const handleSubmit = async () => {
-    // Basic validation
     if (!formData.phone || !formData.email || !formData.message) {
       toast.error("Please fill in all fields");
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address");
@@ -36,13 +34,23 @@ const ContactUs = ({ id }) => {
     }
 
     setIsLoading(true);
+
+    const templateParams = {
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+      date: new Date().toLocaleString(),
+    };
+
     try {
-      const response = await axios.post(
-        "https://ajc-backend.onrender.com/api/contact",
-        formData
+      await emailjs.send(
+        "service_yolr1el", // ✅ Your Service ID
+        "template_lvcntwe", // ✅ Your Template ID
+        templateParams,
+        "9viXEtyXTrrlko6DP" // ✅ Your Public Key
       );
+
       toast.success("Message sent successfully!");
-      // Reset form after successful submission
       setFormData({
         phone: "",
         email: "",
@@ -50,10 +58,7 @@ const ContactUs = ({ id }) => {
       });
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to send message. Please try again."
-      );
+      toast.error("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +89,7 @@ const ContactUs = ({ id }) => {
         <h1 className="font-semibold font-[Roboto] text-center text-[20px] sm:text-[25px] lg:text-[20px]">
           We'd love to hear from you!
         </h1>
+
         <input
           name="phone"
           type="text"
@@ -110,6 +116,7 @@ const ContactUs = ({ id }) => {
           className="bg-[#D7AF67] p-4 rounded-xl w-full sm:w-[350px] lg:w-[400px] h-[80px] lg:h-[100px] mt-5 outline-none font-bold text-xl sm:text-2xl cursor-text"
           placeholder="Message"
         />
+
         <motion.button
           className="bg-[#1A4824] h-[50px] sm:h-[60px] mt-5 w-full sm:w-[350px] lg:w-[400px] rounded-xl font-semibold text-xl sm:text-2xl lg:text-3xl flex justify-center items-center z-10 cursor-pointer"
           variants={buttonAnimations}
@@ -120,6 +127,7 @@ const ContactUs = ({ id }) => {
         >
           {isLoading ? <ClipLoader color="#ffffff" size={25} /> : "Submit"}
         </motion.button>
+
         <span className="mt-5 text-sm lg:text-base">
           We'll get back to you as soon as we can.
         </span>
@@ -127,11 +135,13 @@ const ContactUs = ({ id }) => {
           Thank you for reaching out!
         </span>
       </div>
+
       <img
         className="w-[90%] sm:w-[80%] lg:w-[1000px] lg:h-[750px] lg:-mr-40 max-w-[800px] lg:max-w-none hidden lg:block"
         src={contact}
         alt="Contact illustration"
       />
+
       <Toaster position="top-center" reverseOrder={false} />
     </div>
   );

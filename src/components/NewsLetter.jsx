@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import emailjs from "@emailjs/browser"; // ✅ import EmailJS
 
 const NewsLetter = ({ id }) => {
   const [email, setEmail] = useState("");
@@ -32,28 +33,41 @@ const NewsLetter = ({ id }) => {
     },
   };
 
-  // Email validation function
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  // ✅ Email validation
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // ✅ EmailJS configuration
+  const EMAILJS_SERVICE_ID = "service_yolr1el"; // your EmailJS service ID
+  const EMAILJS_TEMPLATE_ID = "template_1ghs5yc"; // newsletter template
+  const EMAILJS_PUBLIC_KEY = "9viXEtyXTrrlko6DP"; // ⚠️ replace with your public key
+
+  // ✅ Send email using EmailJS directly
   const handleSubmit = async () => {
-    if (!isValidEmail(email)) return; // Additional safeguard
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
 
     setIsLoading(true);
+
     try {
-      const response = await axios.post(
-        "https://ajc-backend.onrender.com/api/newsletter",
-        { email }
+      const templateParams = {
+        subscriber_email: email,
+        subscribed_date: new Date().toLocaleString(),
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
       );
-      toast.success("Subscription mail sent successfully!");
-      setEmail(""); // Clear the input after successful submission
+
+      toast.success("Subscription successful!");
+      setEmail("");
     } catch (error) {
-      console.error("Error subscribing:", error);
-      toast.error(
-        error.response?.data?.error || "Failed to subscribe. Please try again."
-      );
+      console.error("EmailJS Error:", error);
+      toast.error("Failed to subscribe. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -62,9 +76,9 @@ const NewsLetter = ({ id }) => {
   return (
     <div
       id={id}
-      className="bg-[#00140C] z-40 mt-40 flex justify-center mb-20 items-center py-10 lg:py-0 relative "
+      className="bg-[#00140C] z-40 mt-40 flex justify-center mb-20 items-center py-10 lg:py-0 relative"
     >
-      {/* Background Ellipse - Large and Blurred */}
+      {/* Background Ellipse */}
       <div className="absolute inset-0 flex justify-center items-center z-0">
         <img
           className="w-[60%] blur-[35px]"
@@ -80,7 +94,6 @@ const NewsLetter = ({ id }) => {
           backdropFilter: "blur(2px)",
         }}
       >
-        {/* Glow effect elements */}
         <div className="absolute inset-0 rounded-[20px] lg:rounded-[100px] pointer-events-none">
           <div className="absolute -inset-1 bg-[#0D8D79] blur-lg opacity-20 rounded-[20px] lg:rounded-[100px]"></div>
           <div className="absolute -inset-0.5 bg-[#0D8D79] blur-sm opacity-30 rounded-[20px] lg:rounded-[100px]"></div>
@@ -89,6 +102,7 @@ const NewsLetter = ({ id }) => {
         <h1 className="text-white font-[Outfit] text-center font-bold text-2xl sm:text-3xl lg:text-4xl mt-8 px-4 z-10">
           Subscribe to our newsletter
         </h1>
+
         <div className="flex justify-center items-center h-full flex-col lg:flex-row px-4 lg:px-0 gap-4 lg:gap-0 z-10">
           <input
             type="email"
@@ -97,6 +111,7 @@ const NewsLetter = ({ id }) => {
             placeholder="Email"
             className="text-white outline-none border-[2px] rounded-[100px] border-[#0D8D79] p-3 lg:p-4 w-full lg:w-[400px] bg-transparent placeholder-gray-300 focus:ring-2 focus:ring-[#0D8D79]"
           />
+
           <motion.button
             className={`cursor-pointer rounded-3xl md:rounded-tl-none md:rounded-bl-none md:rounded-tr-3xl md:rounded-br-3xl ${
               isValidEmail(email) ? "bg-[#13C7AF]" : "bg-gray-500"
